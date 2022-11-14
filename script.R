@@ -11,10 +11,12 @@ if (!require("MASS")) install.packages("MASS")
 library(tidyverse)
 library(dplyr)
 
-# j'importe les données avec read_csv2 parce que c'est un csv avec des ; et que read_csv attend comme separateur des ,
+# j'importe les données avec read_csv2 parce que c'est un csv avec des ; 
+# et que read_csv attend comme separateur des ,
 df <- readr::read_csv2(
   "/home/onyxia/formation-bonnes-pratiques-R/individu_reg.csv",
-  col_names = c("region", "aemm", "aged", "anai", "catl", "cs1", "cs2", "cs3", "couple", "na38", "naf08", "pnai12", "sexe", "surf", "tp", "trans", "ur")
+  col_names = c("region", "aemm", "aged", "anai", "catl", "cs1", "cs2",
+                "cs3", "couple", "na38", "naf08", "pnai12", "sexe", "surf", "tp", "trans", "ur")
 )
 
 # y a un truc qui va pas avec l'import, je corrige
@@ -22,7 +24,8 @@ colnames(df) <- df[1, ]
 df <- df[2:nrow(df), ]
 
 df2 <- df |>
-  select(c("region", "dept", "aemm", "aged", "anai", "catl", "cs1", "cs2", "cs3", "couple", "na38", "naf08", "pnai12", "sexe", "surf", "tp", "trans", "ur"))
+  select(c("region", "dept", "aemm", "aged", "anai", "catl", "cs1", "cs2",
+           "cs3", "couple", "na38", "naf08", "pnai12", "sexe", "surf", "tp", "trans", "ur"))
 print(df2, 20)
 
 
