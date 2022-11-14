@@ -7,7 +7,6 @@ library(ggplot2)
 library(gt)
 
 # IMPORT DONNEES ----------------------------
-
 df2 <- tibble(tar_load(survey_sample_24))
 #tar_load(pwd_api)
 # FEATURE ENGINEERING -------------------------
