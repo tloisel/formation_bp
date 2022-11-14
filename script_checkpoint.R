@@ -12,35 +12,12 @@ library(dplyr)
 library(forcats)
 library(MASS)
 
-decennie_a_partir_annee <- function(annee) {
-  return(annee - annee %% 10)
-}
-# fonction de stat agregee
-stats_agregees <- function(a, b = "moyenne",
-                           ...) {
-  match.arg(b,
-            c("moyenne",
-              "variance",
-              "ecart-type",
-              "sd",
-              "ecart type")
-  )
-  switch(b,
-         moyenne = mean(a, ...),
-         variance = var(a, ...),
-         sd(a, ...)
-  )
-}
-stats_agregees(rnorm(10))
-stats_agregees(rnorm(10), "ecart type")
-stats_agregees(rnorm(10), "variance")
-
-
+source("functions.R", encoding = "UTF-8")
 
 # IMPORT DONNEES ----------------------------
 
 df2 <- readr::read_csv2(
-  "/home/onyxia/formation-bonnes-pratiques-R/individu_reg.csv",
+  "individu_reg.csv",
   col_select = c("region", "aemm", "aged", "anai",
                  "catl", "cs1", "cs2", "cs3", "couple", "na38",
                  "naf08", "pnai12", "sexe", "surf", "tp", "trans",
@@ -76,14 +53,9 @@ df2$sexe <- df2$sexe %>%
 
 # COMPTE PROFESSIONS =================
 
-# combien de professions
-print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs3[!is.na(cs3)])))))
-print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs2[!is.na(cs2)])))))
-print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs1[!is.na(cs1)])))))
-
+summarise_stat(df2,"cs1")
+summarise_stat(df2,"cs2")
+summarise_stat(df2,"cs3")
 
 # STATISTIQUES AGE ======================
 
@@ -123,27 +95,11 @@ ggplot(temp) +
 
 # stats surf par statut ==================
 
-df3 <- df2 |>
-  group_by(couple, surf) %>%
-  summarise(x = n()) %>%
-  group_by(couple) |>
-  mutate(y = 100 * x / sum(x))
-
-ggplot(df3) +
-  geom_bar(aes(x = surf, y = y, color = couple),
-           stat = "identity", position = "dodge")
+plot_hist_var_by_group(df2,"surf","couple")
 
 # stats trans par statut ===================
 
-df3 <- df2 |>
-  group_by(couple, trans) %>%
-  summarise(x = n()) %>%
-  group_by(couple) |>
-  mutate(y = 100 * x / sum(x))
-
-ggplot(df3) + geom_bar(aes(x = trans, y = y, color = couple),
-                       stat = "identity", position = "dodge")
-
+plot_hist_var_by_group(df2,"trans","couple")
 
 # STATS AGREGEES =================
 
