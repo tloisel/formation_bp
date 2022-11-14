@@ -4,4 +4,5 @@
 .Ruserdata
 secrets.yaml
 .lintr
+*.parquet
 individu_reg.*

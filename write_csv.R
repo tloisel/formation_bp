@@ -5,14 +5,14 @@
 #     bucket = "donnees-insee",
 #     opts = list("region" = "")
 #   )
-
+# 
 # df_parquet
-
+# 
 # data.table::setDT(df_parquet)
-
+# 
 # data.table::fwrite(df_parquet[region == "24"], "individu_reg.csv", sep = ";")
 
-df <- 
+df <-
   aws.s3::s3read_using(
     FUN = readr::read_csv2,
     object = "diffusion/bonnes-pratiques-r/rp_2016_individu_reg_24.csv",
@@ -20,4 +20,4 @@ df <-
     opts = list("region" = "")
   )
 
-readr::write_csv2(df, "individu_reg.csv")
+arrow::write_parquet(df, "individu_reg.parquet")
