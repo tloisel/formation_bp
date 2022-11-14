@@ -12,7 +12,7 @@ library(dplyr)
 library(forcats)
 library(MASS)
 
-source("functions.R", encoding = "UTF-8")
+source("R/functions.R", encoding = "UTF-8")
 
 # IMPORT DONNEES ----------------------------
 
