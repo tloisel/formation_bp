@@ -4,7 +4,7 @@ library(rlang)
 library(forcats)
 library(MASS)
 library(ggplot2)
-
+library(gt)
 
 # IMPORT DONNEES ----------------------------
 
@@ -72,7 +72,23 @@ ggplot(df2[as.numeric(df2$aged) > 50,],
        ),
        alpha = 0.2) + geom_histogram()
 
+stats_age <- df2 |> 
+  group_by(decennie = decennie_a_partir_annee(age)) |>
+  summarise(n())
 
+table_age <- gt(stats_age) |>
+  tab_header(
+    title = "Distribution des âges dans notre population"
+  ) |>
+  fmt_number(
+    columns = `n()`,
+    sep_mark = " ",
+    decimals = 0
+  ) |>
+  cols_label(
+    decennie = "Tranche d'âge",
+    `n()` = "Population"
+  )
 
 # part d'homme dans chaque cohorte ===================
 

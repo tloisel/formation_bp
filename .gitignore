@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+.Rbuildignore
+.Rprofile
 secrets.yaml
 .lintr
 *.parquet
