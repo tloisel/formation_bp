@@ -90,7 +90,7 @@ fonction_de_stat_agregee(df %>% filter(sexe == "Femme") %>% mutate(aged = aged) 
 fonction_de_stat_agregee(df %>% filter(sexe == "Homme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
 fonction_de_stat_agregee(df %>% filter(sexe == "Femme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
 
-api_pwd <- "trotskitueleski$1917"
+
 
 # GRAPHIQUES ------------
 df %>%
@@ -123,18 +123,22 @@ df3 <- tibble(df |> group_by(couple, trans) %>% summarise(x = n()) %>% group_by(
 p <- ggplot(df3) +
   geom_bar(aes(x = trans, y = y, color = couple), stat = "identity", position = "dodge")
 
-dir.create("/home/onyxia/formation-bonnes-pratiques-R/output")
-setwd("ome/onyxia/formation-bonnes-pratiques-R/output")
-
-ggsave(p, "p.png")
+dir.create("output")
 
 
+ggsave(p, "output/p.png")
+
+api_pwd <- yaml::read_yaml("secrets.yaml")$api_pwd
 
 # MODELISATION ------------
 
-df3 <- df %>%
-  select(surf, cs1, ur, couple, aged) %>%
+df3 <- df [,c("surf", "cs1", "ur", "couple", "aged")] %>%
   filter(surf != "Z")
 df3[, 1] <- factor(df3$surf, ordered = T)
 df3[, "cs1"] <- factor(df3$cs1)
 polr(surf ~ cs1 + factor(ur), df3 %>% filter(couple == "2" && as.numeric(aged > 40 && aged < 60)))
+
+
+
+
+

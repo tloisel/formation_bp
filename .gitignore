@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+secrets.yaml
+.lintr
 individu_reg.*
