@@ -1,0 +1,8 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+decennie_a_partir_annee|function|5aeb17a8ba99450b|||||||||||||||
+part_total|function|77e9de8aff8f42e0|||||||||||||||
+read_from_parquet|function|a84d40b34b133803|||||||||||||||
+read_yaml_secret|function|782bef8a966401ad|||||||||||||||
+recode_as_na|function|2e1fd37c7443b622|||||||||||||||
+stats_agregees|function|57658f6927be5c31|||||||||||||||
+survey_sample_24|stem||d258ded9d403f2f9|9edd0c530ecd2f2f|-911654689||t19310.6697632611s||0|parquet|local|vector|||0.758||IOError Failed to open local file individu_reg.parquet. Detail errno 2 No such file or directory

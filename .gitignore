@@ -8,3 +8,4 @@ secrets.yaml
 .lintr
 *.parquet
 individu_reg.*
+_targets.R

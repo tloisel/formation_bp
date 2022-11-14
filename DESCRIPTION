@@ -12,6 +12,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Imports: 
     arrow,
+    bitops,
+    commonmark,
     dplyr,
     forcats,
     ggplot2,

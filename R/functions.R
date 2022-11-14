@@ -61,3 +61,18 @@ part_total <- function(df2, var_groupe = "age", var_interet = "sexe"){
     group_by(!!sym(var_groupe)) |>
     mutate(share = share / sum(share))
 }
+
+read_yaml_secret <- function(filename="secrets.yaml"){
+  return(yaml::read_yaml(filename))
+}
+
+read_from_parquet <- function(filename="individu_reg.parquet"){
+  return(arrow::read_parquet(
+    "individu_reg.parquet",
+    col_select = c("region", "aemm", "aged", "anai",
+                   "catl", "cs1", "cs2", "cs3", "couple", "na38",
+                   "naf08", "pnai12", "sexe", "surf", "tp", "trans",
+                   "ur") ))
+}
+
+
