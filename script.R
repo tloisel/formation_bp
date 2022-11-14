@@ -14,8 +14,7 @@ library(MASS)
 
 # DEFINITION DES FONCTIONS ------------
 
-fonction_de_stat_agregee <- function(a, b = "moyenne", ...) {
-  ignoreNA <<- !ignoreNA
+fonction_de_stat_agregee <- function(a, b = "moyenne", ignoreNA,...) {
   checkvalue <- F
   for (x in c("moyenne", "variance", "ecart-type", "sd", "ecart type")) {
     checkvalue <- (checkvalue | b == x)
@@ -37,6 +36,10 @@ decennie_a_partir_annee <- function(ANNEE) {
            10)
 }
 
+recode_na <- function(data,variable_name,value){
+  data %>% dplyr::mutate(
+    !!rlang::sym(variable_name) := na_if(!!rlang::sym(variable_name),value))
+}
 # IMPORT DES DONNES ------------
 # j'importe les données avec read_csv2 parce que c'est un csv avec des ; 
 # et que read_csv attend comme separateur des ,
@@ -50,53 +53,52 @@ df <- readr::read_csv2(
 
 # PREPROCESSING DES VARIABLES------------
 
+
 df = df %>% mutate(
   na38=na_if(na38,"ZZ"),
-  na38=na_if(trans,"Z"),
+  trans=na_if(trans,"Z"),
   tp=na_if(tp,"Z"),
   ur=factor(ur),
   sexe=fct_recode(factor(sexe), "Homme" = "1", "Femme" = "2"),
   aged=as.numeric(aged)
 )
 
-df[!is.na(df$naf08) & endsWith(df$naf08, "Z"), "naf08"] <- NA
+df[!is.na(df$naf08) & endsWith(df$naf08, "ZZ"), "naf08"] <- NA
 
 
 
 # STATISTIQUES DESCRIPTIVES ------------
 # combien de professions
 print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs1[!is.na(cs1)])))))
+print(summarise(df, length(unique(unlist(cs1[!is.na(cs1)])))))
 print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs2[!is.na(cs2)])))))
+print(summarise(df, length(unique(unlist(cs2[!is.na(cs2)])))))
 print("Nombre de professions :")
-print(summarise(df2, length(unique(unlist(cs3[!is.na(cs3)])))))
+print(summarise(df, length(unique(unlist(cs3[!is.na(cs3)])))))
 
-print.data.frame <- summarise(group_by(df2, aged), n())
+print.data.frame <- summarise(group_by(df, aged), n())
 print(print.data.frame)
 
 # fonction de stat agregee
-ignoreNA <- T
-
-fonction_de_stat_agregee(rnorm(10))
-fonction_de_stat_agregee(rnorm(10), "ecart-type")
-fonction_de_stat_agregee(rnorm(10), "variance")
+fonction_de_stat_agregee(rnorm(10),ignoreNA=TRUE)
+fonction_de_stat_agregee(rnorm(10), "ecart-type",ignoreNA=TRUE)
+fonction_de_stat_agregee(rnorm(10), "variance",ignoreNA=TRUE)
 
 
 fonction_de_stat_agregee(df %>% filter(sexe == "Homme") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
-fonction_de_stat_agregee(df2 %>% filter(sexe == "Femme") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
-fonction_de_stat_agregee(df2 %>% filter(sexe == "Homme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
-fonction_de_stat_agregee(df2 %>% filter(sexe == "Femme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
+fonction_de_stat_agregee(df %>% filter(sexe == "Femme") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
+fonction_de_stat_agregee(df %>% filter(sexe == "Homme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
+fonction_de_stat_agregee(df %>% filter(sexe == "Femme" & couple == "2") %>% mutate(aged = aged) %>% pull(aged), na.rm = T)
 
 api_pwd <- "trotskitueleski$1917"
 
 # GRAPHIQUES ------------
-df2 %>%
+df %>%
   select(aged) %>%
   ggplot(.) +
   geom_histogram(aes(x = 5 * floor(aged / 5)), stat = "count")
 
-ggplot(df2[as.numeric(df2$aged) > 50, c(3, 4)], aes(
+ggplot(df[as.numeric(df$aged) > 50, c(3, 4)], aes(
   x = aged, # x = aged - aged %% 5,
   y = ..density.., fill = factor(decennie_a_partir_annee(as.numeric(aemm)))
 ), alpha = 0.2) +
@@ -107,17 +109,17 @@ ggplot(df2[as.numeric(df2$aged) > 50, c(3, 4)], aes(
 ggplot(df %>% group_by(as.numeric(aged, sexe)) %>% summarise(SH_sexe = n()) %>% group_by(aged) %>% summarise(SH_sexe = SH_sexe / sum(SH_sexe))) %>% filter(sexe == 1) + geom_bar(aes(x = aged, y = SH_sexe), stat = "identity") + geom_point(aes(x = aged, y = SH_sexe), stat = "identity", color = "red") + coord_cartesian(c(0, 100))
 # correction (qu'il faudra retirer)
 # ggplot(
-#   df2 %>% group_by(aged, sexe) %>% summarise(SH_sexe = n()) %>% group_by(aged) %>% mutate(SH_sexe = SH_sexe/sum(SH_sexe)) %>% filter(sexe==1)
+#   df %>% group_by(aged, sexe) %>% summarise(SH_sexe = n()) %>% group_by(aged) %>% mutate(SH_sexe = SH_sexe/sum(SH_sexe)) %>% filter(sexe==1)
 # ) + geom_bar(aes(x = aged, y = SH_sexe), stat="identity") + geom_point(aes(x = aged, y = SH_sexe), stat="identity", color = "red") + coord_cartesian(c(0,100))
 
 
 # stats surf par statut
-df3 <- tibble(df2 |> group_by(couple, surf) %>% summarise(x = n()) %>% group_by(couple) |> mutate(y = 100 * x / sum(x)))
+df3 <- tibble(df |> group_by(couple, surf) %>% summarise(x = n()) %>% group_by(couple) |> mutate(y = 100 * x / sum(x)))
 ggplot(df3) %>%
   geom_bar(aes(x = surf, y = y, color = couple), stat = "identity", position = "dodge")
 
 # stats trans par statut
-df3 <- tibble(df2 |> group_by(couple, trans) %>% summarise(x = n()) %>% group_by(couple) |> mutate(y = 100 * x / sum(x)))
+df3 <- tibble(df |> group_by(couple, trans) %>% summarise(x = n()) %>% group_by(couple) |> mutate(y = 100 * x / sum(x)))
 p <- ggplot(df3) +
   geom_bar(aes(x = trans, y = y, color = couple), stat = "identity", position = "dodge")
 
@@ -130,7 +132,7 @@ ggsave(p, "p.png")
 
 # MODELISATION ------------
 
-df3 <- df2 %>%
+df3 <- df %>%
   select(surf, cs1, ur, couple, aged) %>%
   filter(surf != "Z")
 df3[, 1] <- factor(df3$surf, ordered = T)
